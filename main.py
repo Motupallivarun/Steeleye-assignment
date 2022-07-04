@@ -1,17 +1,13 @@
-# steeleye_assignment
-
 from pydoc import cli
 import pymongo
 from fastapi import FastAPI
 
-# MongoDb atlas is used to create Database
+
 client = pymongo.MongoClient("mongodb+srv://nkc:nkchaittanya@cluster0.sbit1.mongodb.net/")
 
 db = client['steeleye']
 trades = db['trades']
 app = FastAPI()
-
-#  Here get_trade_data function is create to return a list which have no object id.
 
 def get_trade_data():
     trade_data = []
@@ -21,7 +17,6 @@ def get_trade_data():
         trade = data['trade_details']
         trade[0].pop('_id')
 
-    # remove object id key
 
         data.update({'trade_details': trade[0]})
 
@@ -29,15 +24,9 @@ def get_trade_data():
 
     return trade_data
 
-
-# Get list of all trades
-
 @app.get("/all_trades")
 def all_trades():
     return get_trade_data()
-
-
-# Search trades by id
 
 @app.get("/trade/{id}")
 def trade_by_id(id):
@@ -45,9 +34,6 @@ def trade_by_id(id):
     for i in range(0, len(trade_data)):
         if id in trade_data[i].values():
             return trade_data[i]
-
-
-# search by different parameters
 
 @app.get("/query")
 def search(search):
@@ -63,7 +49,6 @@ def search(search):
             query_value.append(trade_data[i])
 
     return query_value
-
 
 @app.get("/filter")
 def filter_data(assetClass=None, end=None, maxprice=None, minprice=None, start=None, tradeType=None):
